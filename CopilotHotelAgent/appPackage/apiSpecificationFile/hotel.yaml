@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Hotel Service
+  description: A simple service to manage hotels
+  version: 1.0.0
+servers:
+  - url: ${{OPENAPI_SERVER_URL}}/api
+    description: The hotel api server
+components:
+  securitySchemes:
+    OAuthPluginVault:
+      type: oauth2
+      description: OAuth configuration for the hotel service
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.microsoftonline.com/${{AAD_APP_TENANT_ID}}/oauth2/v2.0/authorize
+          tokenUrl: https://login.microsoftonline.com/${{AAD_APP_TENANT_ID}}/oauth2/v2.0/token
+          scopes:
+            api://${{AAD_APP_CLIENT_ID}}/user_impersonation: Read hotel records
+paths:
+  /GetHotelDetails:
+    get:
+      operationId: listhotels
+      summary: List all hotels
+      description: Returns a list of hotels with their details and images
+      security:
+        - OAuthPluginVault:
+          - api://${{AAD_APP_CLIENT_ID}}/user_impersonation
+      responses:
+        '200':
+          description: A list of hotels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier of the hotel
+                        title:
+                          type: string
+                          description: The short summary of the hotel
+                        description:
+                          type: string
+                          description: The detailed description of the hotel
+                        assignedTo:
+                          type: string
+                          description: The user who is responsible for the hotel
+                        date:
+                          type: string
+                          format: date-time
+                          description: The date and time when the hotel is scheduled or completed
+                        image:
+                          type: string
+                          format: uri
+                          description: The URL of the image of the item to be hoteled or the hotel process

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.2/schema.json",
+  "schema_version": "v2.2",
+  "namespace": "hotel",
+  "name_for_human": "CopilotHotelAgent${{APP_NAME_SUFFIX}}",
+  "description_for_human": "Track your hotel records",
+  "description_for_model": "Plugin for searching a hotel list, you can search by who's assigned to the hotel.",
+  "functions": [
+    {
+      "name": "listhotels",
+      "description": "Returns a list of hotels with their details and images",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$.results"
+        }
+      }
+    }
+  ],
+  "runtimes": [
+    {
+      "type": "OpenApi",
+      "auth": {
+        "type": "OAuthPluginVault",
+        "reference_id": "${{OAUTH2AUTHCODE_CONFIGURATION_ID}}"
+      },
+      "spec": {
+        "url": "apiSpecificationFile/hotel.yaml",
+        "progress_style": "ShowUsageWithInputAndOutput"
+      },
+      "run_for_functions": ["listhotels"]
+    }
+  ],
+  "capabilities": {
+    "conversation_starters": [
+      {
+        "text": "List all hotels"
+      }
+    ]
+  }
+}
